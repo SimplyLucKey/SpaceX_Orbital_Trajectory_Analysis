@@ -1,4 +1,4 @@
-# orbital_mechanics
+# Orbital Trajectory Analysis
 
 SpaceX plans to accomplish the first interplanetary travel from Earth to Mars within this decade. Are they overly optimistic about their goals? Have they gathered all the information they needed to tackle this challenge? Are humans ready to inhabit on a completely new and unfamiliar planet?
 
