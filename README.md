@@ -9,5 +9,5 @@ There are countless unknown variables and infinitely-many more questions to cons
 TODO:
 
 ~~- Generate velocity vector with Battin-Loechler algorithm~~
-- Generate earth-to-mars trajectory data ~~
+- ~~Generate earth-to-mars trajectory data ~~
 - Visualizing a cost function with respect to trajectory
