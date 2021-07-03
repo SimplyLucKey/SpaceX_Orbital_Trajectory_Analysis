@@ -2,6 +2,8 @@ import numpy as np
 import lambert
 import planet_data
 import pandas as pd
+from tqdm import tqdm
+import time
 
 def trajectory_calc(planet1: str, planet2: str):
     mu = 1.32712440020e11 # constant mu for the sun
@@ -10,11 +12,12 @@ def trajectory_calc(planet1: str, planet2: str):
     planet2_dt, planet2_jd, planet2_r, planet2_v = planet_data.read_planet_files(planet2)
 
     # matrix of cost function
-    dv = [[0.0] * len(planet1_dt) for i in range(len(planet2_dt))]
-    tof = [[0.0] * len(planet1_dt) for i in range(len(planet2_dt))]
+    dv = [[None] * len(planet1_dt) for i in range(len(planet2_dt))]
+    tof = [[None] * len(planet1_dt) for i in range(len(planet2_dt))]
+    dth_arr = [[None] * len(planet1_dt) for i in range(len(planet2_dt))]
 
-
-    for i in range(len(planet1_jd)):
+    st = time.time()
+    for i in tqdm(range(len(planet1_jd))):
         for j in range(len(planet2_jd)):
 
             # time of flight to check validity
@@ -35,9 +38,10 @@ def trajectory_calc(planet1: str, planet2: str):
 
             # find the transfer angle (dth)
             dth = np.arccos(A)
+            dth_arr[i][j] = dth * 180.0 / np.pi
 
             # angle of transfer restrictions and 60 days of tolerance
-            if 3.0 < dth * (180.0 / np.pi) < 358.0 and tof[i][j] > 60.0:
+            if 3.0 < dth_arr[i][j] < 358.0 and tof[i][j] > 60.0:
 
                 # time of flight convert to seconds
                 v1, v2 = lambert.battin(planet1_r[i], planet1_v[i], planet2_r[j], tof[i][j] * 86400.0, mu)
@@ -49,16 +53,21 @@ def trajectory_calc(planet1: str, planet2: str):
     # convert to dataframe to store, including arrival date as header
     df_tof = pd.DataFrame(tof,  columns=planet2_dt)
     df_dv = pd.DataFrame(dv, columns=planet2_dt)
+    df_dth = pd.DataFrame(dth_arr, columns=planet2_dt)
 
     # add departure date
     df_tof['departure'] = planet1_dt
     df_dv['departure'] = planet1_dt
+    df_dth['departure'] = planet1_dt
 
     # save the csv
     PATH = './data'
     df_tof.to_csv(PATH + '/tof.csv', header=True, index=False)
     df_dv.to_csv(PATH + '/dv.csv', header=True, index=False)
+    df_dth.to_csv(PATH + '/dth.csv', header=True, index=False)
 
+    et = time.time()
+    print(et - st)
 
 if __name__ == '__main__':
     print(trajectory_calc('earth', 'mars'))

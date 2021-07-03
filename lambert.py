@@ -179,7 +179,7 @@ def battin(r1, vm1, r2, t, mu):
         if np.mod(dth, 2.0 * np.pi) > np.pi:
             nH *= -1
         
-        y2a =mu / p - x1 * np.sin(dth) + A * np.cos(dth)
+        y2a = mu / p - x1 * np.sin(dth) + A * np.cos(dth)
         y2b = mu / p + x1 * np.sin(dth) + A * np.cos(dth)
         
         if np.abs(mu / r2M - y2b) < np.abs(mu / r2M - y2a):
